@@ -149,10 +149,12 @@ func GetShortURLs(ctx context.Context, owner primitive.ObjectID) ([]ShortURLMode
 
 func GetShortURL(ctx context.Context, shortID string, owner primitive.ObjectID) (*ShortURLModel, error) {
 	shortURLModel := new(ShortURLModel)
+
 	db, err := mongodb.Default()
 	if err != nil {
 		return shortURLModel, err
 	}
+
 	filter := bson.D{{Key: "short_id", Value: shortID}, {Key: "owner", Value: owner}}
 	err = db.FindOne(ctx, CollectionShortURLs, shortURLModel, filter)
 	shortURLModel.ShortID = url.PathEscape(shortURLModel.ShortID)
