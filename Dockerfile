@@ -5,7 +5,7 @@ ADD . .
 RUN go build -o /go/bin/server ./cmd/server
 CMD ["/go/bin/server"]
 
-FROM alpine:3.7
+FROM alpine:3.22
 
 COPY  --from=build /go/bin/server /go/bin/server
 CMD ["/go/bin/server"]
