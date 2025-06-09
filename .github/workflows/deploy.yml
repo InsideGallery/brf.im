@@ -8,7 +8,6 @@ on:
 env:
   REPOSITORY: ghcr.io/insidegallery/brfim
   FOLDER: brfim
-  GIT_TOKEN: "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"
 
 jobs:
   push-store-image:
