@@ -1,0 +1,47 @@
+name: Deploy
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+env:
+  REPOSITORY: ghcr.io/insidegallery/brfim
+  FOLDER: brfim
+  GIT_TOKEN: "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"
+
+jobs:
+  push-store-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@main
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - name: 'Build Inventory Image'
+        run: |
+               echo "${{ env.GIT_TOKEN }}" | docker login ghcr.io --username insidegallery --password-stdin
+               docker build . --tag ${{ env.REPOSITORY }}:${{ env.RELEASE_VERSION }}
+               docker push ${{ env.REPOSITORY }}:${{ env.RELEASE_VERSION }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@main
+      - uses: actions/setup-go@v5
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - name: 'Build Inventory Image'
+        run: |
+                git config --global user.email info@inside.gallery
+                git config --global "Automatic Deploy"
+                go install sigs.k8s.io/kustomize/kustomize/v5@latest
+                git clone https://${{ env.GIT_TOKEN }}@github.com/InsideGallery/k8s.git
+                cd k8s
+                git remote set-url origin https://${{ env.GIT_TOKEN }}@github.com/InsideGallery/k8s.git
+                cd services/${{ env.FOLDER }}/overlays/production
+                kustomize edit set ${{ env.REPOSITORY }}:${{ env.RELEASE_VERSION }}
+                git add .
+                git commit -m "Update ${{ env.FOLDER }} to version ${{ env.RELEASE_VERSION }}"
+                git push
