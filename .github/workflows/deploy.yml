@@ -35,7 +35,7 @@ jobs:
       - name: 'Build Inventory Image'
         run: |
                 git config --global user.email info@inside.gallery
-                git config --global "Automatic Deploy"
+                git config --global user.name "Automatic Deploy"
                 go install sigs.k8s.io/kustomize/kustomize/v5@latest
                 git clone https://${{ env.GIT_TOKEN }}@github.com/InsideGallery/k8s.git
                 cd k8s
