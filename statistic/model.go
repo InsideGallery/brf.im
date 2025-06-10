@@ -24,6 +24,15 @@ func New() (*Statistic, error) {
 
 func (s *Statistic) Track(ctx context.Context, shortID string) error {
 	filter := bson.D{{Key: "short_id", Value: shortID}}
+	cnt, err := s.client.CountDocuments(ctx, shorter.CollectionShortURLs, filter)
+	if err != nil {
+		return err
+	}
+
+	if cnt == 0 {
+		return nil
+	}
+
 	update := bson.D{{Key: "$inc", Value: bson.D{{Key: "clicks", Value: 1}}}}
 
 	return s.client.UpsertOne(ctx, shorter.CollectionShortURLs, update, filter)
