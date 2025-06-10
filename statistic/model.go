@@ -24,6 +24,7 @@ func New() (*Statistic, error) {
 
 func (s *Statistic) Track(ctx context.Context, shortID string) error {
 	filter := bson.D{{Key: "short_id", Value: shortID}}
+
 	cnt, err := s.client.CountDocuments(ctx, shorter.CollectionShortURLs, filter)
 	if err != nil {
 		return err
