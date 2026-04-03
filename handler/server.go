@@ -85,9 +85,9 @@ func (h *Handler) Run() error {
 }
 
 // ErrorHandler default error handler
-func (h *Handler) ErrorHandler(status int) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		slog.Error("ErrorHandler", "method", r.Method, "url", r.URL.String())
+func (h *Handler) ErrorHandler(status int) func(w http.ResponseWriter, _ *http.Request) {
+	return func(w http.ResponseWriter, _ *http.Request) {
+		slog.Error("ErrorHandler", "status", status)
 		http.Error(w, "Error during load", status)
 	}
 }
