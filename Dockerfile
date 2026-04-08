@@ -1,4 +1,4 @@
-FROM golang:1.24-alpine as build
+FROM golang:1.26-alpine as build
 
 WORKDIR /go/src/github.com/InsideGallery/brf.im
 ADD . .
